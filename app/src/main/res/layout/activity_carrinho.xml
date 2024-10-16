@@ -41,36 +41,53 @@
             android:layout_height="38dp"
             app:srcCompat="@drawable/label_carrinho" />
 
+        <AutoCompleteTextView
+            android:id="@+id/autoCompleteClientes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:background="@drawable/borda"
+            android:completionThreshold="1"
+            android:hint="Selecione o cliente"
+            android:inputType="text"
+            android:padding="8dp" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_produtos"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="200dp"
             android:layout_weight="1" />
 
 
-        <TextView
-            android:id="@+id/textView2"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="right"
-            android:text="Valor Total: R$ 0,0" />
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            android:text="Desconto Aplicado: 0 %" />
+            <TextView
+                android:id="@+id/valorTotalText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:text="Valor Total: R$ 0,0" />
 
-        <TextView
-            android:id="@+id/textView3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            android:text="Valor a pagar: R$ 0,00"
-            android:textColor="#000000"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            <TextView
+                android:id="@+id/descontoText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:text="Desconto Aplicado: 0 %" />
+
+            <TextView
+                android:id="@+id/valorDesconto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:text="Valor a pagar: R$ 0,00"
+                android:textColor="#000000"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"

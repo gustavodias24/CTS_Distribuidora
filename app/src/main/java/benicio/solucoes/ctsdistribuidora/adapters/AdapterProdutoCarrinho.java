@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import benicio.solucoes.ctsdistribuidora.CarrinhoActivity;
 import benicio.solucoes.ctsdistribuidora.R;
 import benicio.solucoes.ctsdistribuidora.model.ProdutoModel;
 import benicio.solucoes.ctsdistribuidora.utils.CarrinhoUtils;
@@ -55,6 +56,7 @@ public class AdapterProdutoCarrinho extends RecyclerView.Adapter<AdapterProdutoC
             produtoModel.setValorSomado(novoValor);
             holder.valor.setText(novoValor);
             holder.quantidadeTexView.setText(quantidadeExistente + "");
+            CarrinhoActivity.calcularValorPagar();
         });
 
         holder.menosUmCarrinho.setOnClickListener(v -> {
@@ -71,6 +73,7 @@ public class AdapterProdutoCarrinho extends RecyclerView.Adapter<AdapterProdutoC
                 CarrinhoUtils.removeProduto(c, produtoModel);
                 notifyDataSetChanged();
             }
+            CarrinhoActivity.calcularValorPagar();
         });
     }
 

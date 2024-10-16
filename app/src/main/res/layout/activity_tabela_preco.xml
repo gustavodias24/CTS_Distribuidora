@@ -36,17 +36,43 @@
         </LinearLayout>
 
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/edt_pesquisa"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/borda"
+                android:ems="10"
+                android:hint="Pesquisar"
+                android:inputType="text"
+                android:padding="8dp" />
+
+            <ImageView
+                android:id="@+id/btn_pesquisar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:foregroundGravity="center"
+                app:srcCompat="@android:drawable/ic_menu_search" />
+        </LinearLayout>
+
         <ImageView
             android:id="@+id/imageView3"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="4dp"
             app:srcCompat="@drawable/label_descri_valor" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_produtos"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="200dp"
             android:layout_weight="1" />
 
         <LinearLayout

@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import benicio.solucoes.ctsdistribuidora.adapters.AdapterProduto;
@@ -50,6 +51,28 @@ public class TabelaPrecoActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN
         );
 
+        mainBinding.btnPesquisar.setOnClickListener(v -> {
+            String value = mainBinding.edtPesquisa.getText().toString();
+
+            apiService.get_filter_produto("nome", value).enqueue(new Callback<ResponseModelProduto>() {
+                @SuppressLint("NotifyDataSetChanged")
+                @Override
+                public void onResponse(Call<ResponseModelProduto> call, Response<ResponseModelProduto> response) {
+                    if (response.isSuccessful()) {
+                        lista.clear();
+                        lista.addAll(response.body().getMsg());
+                        Collections.sort(lista, (p1, p2) -> p1.getNome().compareToIgnoreCase(p2.getNome()));
+                        adapterProduto.notifyDataSetChanged();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseModelProduto> call, Throwable throwable) {
+
+                }
+            });
+        });
+
         mainBinding.carrinho.setOnClickListener(v -> startActivity(new Intent(this, CarrinhoActivity.class)));
 
         mainBinding.voltar.setOnClickListener(v -> finish());
@@ -71,6 +94,7 @@ public class TabelaPrecoActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     lista.clear();
                     lista.addAll(response.body().getMsg());
+                    Collections.sort(lista, (p1, p2) -> p1.getNome().compareToIgnoreCase(p2.getNome()));
                     adapterProduto.notifyDataSetChanged();
                 }
             }
