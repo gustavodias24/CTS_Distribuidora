@@ -9,6 +9,14 @@ public class ProdutoModel {
 
     boolean promo;
 
+    public ProdutoModel(String _id, String nome, String descricao, String valor, boolean promo) {
+        this._id = _id;
+        this.nome = nome;
+        this.descricao = descricao;
+        this.valor = valor;
+        this.promo = promo;
+    }
+
     boolean checado = false;
 
     public ProdutoModel() {

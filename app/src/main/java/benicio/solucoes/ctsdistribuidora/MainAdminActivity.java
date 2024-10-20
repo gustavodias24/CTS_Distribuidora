@@ -39,5 +39,10 @@ public class MainAdminActivity extends AppCompatActivity {
         mainBinding.cadastroCliente.setOnClickListener(v -> startActivity(new Intent(this, CadatroClienteActivity.class)));
 
         mainBinding.cadastroProduto.setOnClickListener(v -> startActivity(new Intent(this, CadastroProdutoActivity.class)));
+        mainBinding.tabelaPreco.setOnClickListener(v -> {
+            Intent i = new Intent(this,  TabelaPrecoActivity.class);
+            i.putExtra("isAdmin", true);
+            startActivity(i);
+        });
     }
 }

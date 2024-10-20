@@ -29,6 +29,7 @@
         android:id="@+id/cadastro_cliente"
         android:layout_width="0dp"
         android:layout_height="100dp"
+        android:scaleType="fitXY"
         app:layout_constraintBottom_toTopOf="@+id/cadastro_produto"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -40,11 +41,24 @@
         android:id="@+id/cadastro_produto"
         android:layout_width="0dp"
         android:layout_height="100dp"
-        app:layout_constraintBottom_toTopOf="@+id/imageView2"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toTopOf="@+id/tabela_preco"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cadastro_cliente"
         app:srcCompat="@drawable/cadastro_produto" />
+
+    <ImageView
+        android:id="@+id/tabela_preco"
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toTopOf="@+id/imageView2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cadastro_produto"
+        app:srcCompat="@drawable/tabela_precos" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

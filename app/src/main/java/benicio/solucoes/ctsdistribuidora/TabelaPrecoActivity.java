@@ -34,10 +34,12 @@ public class TabelaPrecoActivity extends AppCompatActivity {
     private ActivityTabelaPrecoBinding mainBinding;
 
     private List<ProdutoModel> lista = new ArrayList<>();
-    private AdapterProduto adapterProduto;
+    public static AdapterProduto adapterProduto;
 
     private ApiService apiService;
 
+
+    private boolean isAdmin = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,12 +83,21 @@ public class TabelaPrecoActivity extends AppCompatActivity {
                 RetrofitUtil.createRetrofit()
         );
 
+        Bundle b = getIntent().getExtras();
+        if (b != null) {
+            isAdmin = b.getBoolean("isAdmin", false);
+        }
+
         mainBinding.recyclerProdutos.setLayoutManager(new LinearLayoutManager(this));
         mainBinding.recyclerProdutos.setHasFixedSize(true);
         mainBinding.recyclerProdutos.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        adapterProduto = new AdapterProduto(lista, this);
+        adapterProduto = new AdapterProduto(lista, this, isAdmin);
         mainBinding.recyclerProdutos.setAdapter(adapterProduto);
 
+        atualizarProdutos();
+    }
+
+    private void atualizarProdutos() {
         apiService.get_produto().enqueue(new Callback<ResponseModelProduto>() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
@@ -104,5 +115,12 @@ public class TabelaPrecoActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    @Override
+    protected void onStart() {
+        super.onStart();
+        atualizarProdutos();
     }
 }

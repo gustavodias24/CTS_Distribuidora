@@ -16,6 +16,10 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.squareup.picasso.Picasso;
+
 import java.io.File;
 import java.util.Objects;
 import java.util.UUID;
@@ -41,6 +45,8 @@ public class CadastroProdutoActivity extends AppCompatActivity {
     private ProdutoModel produtoModel;
     private ActivityCadastroProdutoBinding mainBinding;
 
+    private boolean isUpdate = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,31 +70,65 @@ public class CadastroProdutoActivity extends AppCompatActivity {
             startActivityForResult(intent, PICK_IMAGE);
         });
 
-        produtoModel = new ProdutoModel();
+        Bundle b = getIntent().getExtras();
+        if (b != null) {
+            isUpdate = true;
+            produtoModel = new Gson().fromJson(
+                    b.getString("produto", ""),
+                    new TypeToken<ProdutoModel>() {
+                    }.getType()
+            );
+
+            imageUri = Uri.parse("http://147.79.83.218:5000/imagem/" + '"' + produtoModel.get_id() + '"');
+            Picasso.get().load(imageUri).into(mainBinding.camera, new com.squareup.picasso.Callback() {
+                @Override
+                public void onSuccess() {
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    mainBinding.camera.setImageResource(R.drawable.camera);
+                }
+            });
+
+            mainBinding.fieldNome.setText(produtoModel.getNome());
+            mainBinding.fieldDescricao.setText(produtoModel.getDescricao());
+            mainBinding.fieldValor.setText(produtoModel.getValor());
+            mainBinding.checkPromo.setChecked(produtoModel.isPromo());
+
+        } else {
+            produtoModel = new ProdutoModel();
+        }
 
         mainBinding.salvar.setOnClickListener(v -> {
             if (produtoModel.get_id().isEmpty()) {
                 produtoModel.set_id(UUID.randomUUID().toString());
             }
 
-            produtoModel.setNome(Objects.requireNonNull(mainBinding.fieldNome.getText()).toString());
-            produtoModel.setDescricao(Objects.requireNonNull(mainBinding.fieldDescricao.getText()).toString());
-            produtoModel.setValor(Objects.requireNonNull(Objects.requireNonNull(mainBinding.fieldValor.getText()).toString().replace(",", ".")));
-            produtoModel.setPromo(mainBinding.checkPromo.isChecked());
-
             uploadImagem(imageUri, produtoModel.get_id());
 
-            apiService.create_produto(produtoModel).enqueue(new Callback<Void>() {
+            apiService.create_produto(new ProdutoModel(
+                    produtoModel.get_id(),
+                    Objects.requireNonNull(mainBinding.fieldNome.getText()).toString(),
+                    Objects.requireNonNull(mainBinding.fieldDescricao.getText()).toString(),
+                    Objects.requireNonNull(Objects.requireNonNull(mainBinding.fieldValor.getText()).toString().replace(",", ".")),
+                    mainBinding.checkPromo.isChecked()
+            )).enqueue(new Callback<Void>() {
                 @Override
                 public void onResponse(Call<Void> call, Response<Void> response) {
                     if (response.isSuccessful()) {
-                        String msg = "Produto cadastrado com sucesso!";
+                        String msg = "";
+                        if (isUpdate) {
+                            msg = "Produto atualizado com sucesso!";
+                        } else {
+                            msg = "Produto cadastrado com sucesso!";
+                            mainBinding.camera.setImageResource(R.drawable.camera);
+                            mainBinding.fieldNome.setText("");
+                            mainBinding.fieldDescricao.setText("");
+                            mainBinding.fieldValor.setText("");
+                            mainBinding.checkPromo.setChecked(false);
+                        }
                         Toast.makeText(CadastroProdutoActivity.this, msg, Toast.LENGTH_SHORT).show();
-                        mainBinding.camera.setImageResource(R.drawable.camera);
-                        mainBinding.fieldNome.setText("");
-                        mainBinding.fieldDescricao.setText("");
-                        mainBinding.fieldValor.setText("");
-                        mainBinding.checkPromo.setChecked(false);
                     }
                 }
 

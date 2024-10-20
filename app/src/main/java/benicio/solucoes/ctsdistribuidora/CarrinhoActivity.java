@@ -2,6 +2,7 @@ package benicio.solucoes.ctsdistribuidora;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.WindowManager;
@@ -47,11 +48,19 @@ public class CarrinhoActivity extends AppCompatActivity {
     public static String descontoSelecionado = "0";
     public static String clienteSelecionado = "";
 
+    public static SharedPreferences carrinho_prefs;
+    public static SharedPreferences.Editor editor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mainBinding = ActivityCarrinhoBinding.inflate(getLayoutInflater());
         setContentView(mainBinding.getRoot());
+
+        carrinho_prefs = getSharedPreferences("carrinho_prefs", MODE_PRIVATE);
+        editor = carrinho_prefs.edit();
+
+        mainBinding.editRepresentante.setText(carrinho_prefs.getString("Representante", ""));
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         getWindow().setFlags(
@@ -101,7 +110,7 @@ public class CarrinhoActivity extends AppCompatActivity {
             }
         });
 
-        mainBinding.enviarZap.setOnClickListener( v -> compartilharTexto());
+        mainBinding.enviarZap.setOnClickListener(v -> compartilharTexto());
         mainBinding.voltar.setOnClickListener(v ->
 
                 finish());
@@ -149,7 +158,12 @@ public class CarrinhoActivity extends AppCompatActivity {
     }
 
 
+    @SuppressLint("DefaultLocale")
     private void compartilharTexto() {
+
+        String representanteString = mainBinding.editRepresentante.getText().toString();
+        editor.putString("Representante", representanteString).apply();
+
         if (clienteSelecionado.isEmpty()) {
             Toast.makeText(this, "Selecione um cliente primeiro!", Toast.LENGTH_SHORT).show();
         } else {
@@ -157,23 +171,23 @@ public class CarrinhoActivity extends AppCompatActivity {
             intent.setType("text/plain");
 
             StringBuilder infos = new StringBuilder();
-            infos.append("*Cliente:* " + clienteSelecionado).append("\n\n");
-            infos.append("*Produtos:* ").append("\n");
-            for (ProdutoModel produtoModel : produtosCarrinho) {
+            infos.append(representanteString).append("\n\n");
+            infos.append(clienteSelecionado).append("\n\n");
 
+            for (ProdutoModel produtoModel : produtosCarrinho) {
                 Float valorUnitario = Float.parseFloat(produtoModel.getValor().replace(",", "."));
                 Float valorSomado = Float.parseFloat(produtoModel.getValorSomado().replace(",", "."));
                 int quantidadeComprada = (int) (valorSomado / valorUnitario);
-                infos.append(produtoModel.getNome())
-                        .append(" x")
-                        .append(quantidadeComprada)
-                        .append(" Total: ").append(produtoModel.getValorSomado()).append("\n");
+
+                infos.append(String.format("%03d", quantidadeComprada))
+                        .append(" ").append(produtoModel.getNome())
+                        .append(" ").append(produtoModel.getValorSomado()).append('\n');
             }
 
             infos.append("\n")
-                    .append(mainBinding.valorTotalText.getText().toString()).append("\n")
-                    .append(mainBinding.descontoText.getText().toString()).append("\n")
-                    .append(mainBinding.valorDesconto.getText().toString()).append("\n");
+                    .append(mainBinding.valorTotalText.getText().toString().split(":")[1]).append("\n")
+                    .append(mainBinding.descontoText.getText().toString().split(":")[1]).append("\n")
+                    .append("*" + mainBinding.valorDesconto.getText().toString().split(":")[1].toUpperCase().trim() + "*").append("\n");
 
 
             intent.putExtra(Intent.EXTRA_TEXT, infos.toString());

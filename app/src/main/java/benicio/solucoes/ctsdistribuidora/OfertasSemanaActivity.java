@@ -89,7 +89,7 @@ public class OfertasSemanaActivity extends AppCompatActivity {
         mainBinding.recyclerProdutos.setLayoutManager(new LinearLayoutManager(this));
         mainBinding.recyclerProdutos.setHasFixedSize(true);
         mainBinding.recyclerProdutos.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        adapterProduto = new AdapterProduto(lista, this);
+        adapterProduto = new AdapterProduto(lista, this, false);
         mainBinding.recyclerProdutos.setAdapter(adapterProduto);
 
         apiService.get_produto().enqueue(new Callback<ResponseModelProduto>() {

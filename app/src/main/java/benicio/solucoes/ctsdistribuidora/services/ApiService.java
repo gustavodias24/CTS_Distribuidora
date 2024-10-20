@@ -7,6 +7,7 @@ import benicio.solucoes.ctsdistribuidora.model.ResponseModelProduto;
 import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
@@ -24,6 +25,9 @@ public interface ApiService {
 
     @GET("produto")
     Call<ResponseModelProduto> get_produto();
+
+    @DELETE("produto")
+    Call<Void> delete_produto(@Query("_id") String _id);
 
     @GET("produto")
     Call<ResponseModelProduto> get_filter_produto(@Query("query") String query, @Query("value") String value);

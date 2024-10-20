@@ -41,6 +41,18 @@
             android:layout_height="38dp"
             app:srcCompat="@drawable/label_carrinho" />
 
+        <EditText
+            android:id="@+id/editRepresentante"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:background="@drawable/borda"
+            android:completionThreshold="1"
+            android:hint="Representante"
+            android:inputType="text"
+            android:layout_marginVertical="8dp"
+            android:padding="8dp" />
+
         <AutoCompleteTextView
             android:id="@+id/autoCompleteClientes"
             android:layout_width="match_parent"
