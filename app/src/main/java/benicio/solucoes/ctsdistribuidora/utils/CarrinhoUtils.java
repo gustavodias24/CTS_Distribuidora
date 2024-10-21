@@ -3,6 +3,7 @@ package benicio.solucoes.ctsdistribuidora.utils;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -40,10 +41,18 @@ public class CarrinhoUtils {
         List<ProdutoModel> listaExistente = new Gson().fromJson(prefs.getString(LISTA_NAME, ""), new TypeToken<List<ProdutoModel>>() {
         }.getType());
 
-        if (listaExistente != null)
-            lista.addAll(listaExistente);
+        boolean cadastrarNovoProduto = true;
+        for (int i = 0; i < listaExistente.size(); i++) {
+            ProdutoModel produtoExistente = listaExistente.get(i);
+            lista.add(produtoExistente);
+            if (produtoExistente.get_id().equals(produto.get_id())) {
+                cadastrarNovoProduto = false;
+            }
+        }
 
-        lista.add(produto);
+        if (cadastrarNovoProduto){
+            lista.add(produto);
+        }
 
         editor.putString(LISTA_NAME, new Gson().toJson(lista)).apply();
     }

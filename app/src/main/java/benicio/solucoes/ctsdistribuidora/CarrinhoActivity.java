@@ -51,6 +51,7 @@ public class CarrinhoActivity extends AppCompatActivity {
     public static SharedPreferences carrinho_prefs;
     public static SharedPreferences.Editor editor;
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +61,11 @@ public class CarrinhoActivity extends AppCompatActivity {
         carrinho_prefs = getSharedPreferences("carrinho_prefs", MODE_PRIVATE);
         editor = carrinho_prefs.edit();
 
+        descontoSelecionado = carrinho_prefs.getString("descontoSelecionado", "0");
+        clienteSelecionado = carrinho_prefs.getString("clienteSelecionado", "");
+
+        mainBinding.descontoText.setText("Desconto Aplicado: " + descontoSelecionado + " %");
+        mainBinding.autoCompleteClientes.setText(carrinho_prefs.getString("clienteSelecionado", ""));
         mainBinding.editRepresentante.setText(carrinho_prefs.getString("Representante", ""));
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
@@ -99,6 +105,8 @@ public class CarrinhoActivity extends AppCompatActivity {
                             mainBinding.descontoText.setText("Desconto Aplicado: " + descontoSelecionado + " %");
                             calcularValorPagar();
                             Toast.makeText(CarrinhoActivity.this, clienteSelecionado + " selecionado!", Toast.LENGTH_SHORT).show();
+                            editor.putString("descontoSelecionado", descontoSelecionado).apply();
+                            editor.putString("clienteSelecionado", clienteSelecionado).apply();
                             break;
                         }
                     }
@@ -122,6 +130,7 @@ public class CarrinhoActivity extends AppCompatActivity {
         mainBinding.recyclerProdutos.addItemDecoration(new
 
                 DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        produtosCarrinho.clear();
         produtosCarrinho.addAll(CarrinhoUtils.returnProdutos(this));
         adapterProduto = new AdapterProdutoCarrinho(produtosCarrinho, this);
         mainBinding.recyclerProdutos.setAdapter(adapterProduto);
@@ -185,8 +194,8 @@ public class CarrinhoActivity extends AppCompatActivity {
             }
 
             infos.append("\n")
-                    .append(mainBinding.valorTotalText.getText().toString().split(":")[1]).append("\n")
-                    .append(mainBinding.descontoText.getText().toString().split(":")[1]).append("\n")
+                    .append("_"+mainBinding.valorTotalText.getText().toString().split(":")[1].trim()+"_").append("\n")
+                    .append("_"+mainBinding.descontoText.getText().toString().split(":")[1].trim()+"_").append("\n")
                     .append("*" + mainBinding.valorDesconto.getText().toString().split(":")[1].toUpperCase().trim() + "*").append("\n");
 
 

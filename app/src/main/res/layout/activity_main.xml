@@ -29,7 +29,7 @@
     <ImageView
         android:id="@+id/tabela_preco"
         android:layout_width="0dp"
-        android:layout_height="100dp"
+        android:layout_height="130dp"
         android:layout_marginTop="32dp"
         android:scaleType="fitXY"
         app:layout_constraintEnd_toEndOf="parent"
@@ -41,7 +41,7 @@
     <ImageView
         android:id="@+id/oferta_semana"
         android:layout_width="0dp"
-        android:layout_height="100dp"
+        android:layout_height="130dp"
         android:scaleType="fitXY"
         app:layout_constraintBottom_toTopOf="@+id/button_admin_cadastro"
         app:layout_constraintEnd_toEndOf="parent"
