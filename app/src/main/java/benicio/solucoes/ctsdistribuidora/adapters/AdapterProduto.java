@@ -130,15 +130,22 @@ public class AdapterProduto extends RecyclerView.Adapter<AdapterProduto.MyViewHo
         });
 
         holder.check.setOnClickListener(v -> {
-            if (!produtoModel.isChecado()) {
-                holder.check.setImageResource(R.drawable.check_marcado);
-                produtoModel.setChecado(true);
-                CarrinhoUtils.addProduto(c, produtoModel);
-            } else {
-                holder.check.setImageResource(R.drawable.check_desmarcado);
-                produtoModel.setChecado(false);
-                CarrinhoUtils.removeProduto(c, produtoModel);
+            try{
+                if (!produtoModel.isChecado()) {
+                    holder.check.setImageResource(R.drawable.check_marcado);
+                    produtoModel.setChecado(true);
+                    CarrinhoUtils.addProduto(c, produtoModel);
+                } else {
+                    holder.check.setImageResource(R.drawable.check_desmarcado);
+                    produtoModel.setChecado(false);
+                    CarrinhoUtils.removeProduto(c, produtoModel);
+                }
+            }catch (Exception e){
+                AlertDialog.Builder builder = new AlertDialog.Builder(c);
+                builder.setMessage(e.getMessage());
+                builder.create().show();
             }
+
         });
     }
 

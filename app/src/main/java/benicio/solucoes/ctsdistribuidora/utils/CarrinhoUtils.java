@@ -41,6 +41,10 @@ public class CarrinhoUtils {
         List<ProdutoModel> listaExistente = new Gson().fromJson(prefs.getString(LISTA_NAME, ""), new TypeToken<List<ProdutoModel>>() {
         }.getType());
 
+        if ( listaExistente == null){
+            listaExistente = new ArrayList<>();
+        }
+
         boolean cadastrarNovoProduto = true;
         for (int i = 0; i < listaExistente.size(); i++) {
             ProdutoModel produtoExistente = listaExistente.get(i);
@@ -67,8 +71,9 @@ public class CarrinhoUtils {
         List<ProdutoModel> listaExistente = new Gson().fromJson(prefs.getString(LISTA_NAME, ""), new TypeToken<List<ProdutoModel>>() {
         }.getType());
 
-        if (listaExistente != null)
+        if (listaExistente != null){
             lista.addAll(listaExistente);
+        }
 
         for (int i = 0; i < lista.size(); i++) {
             if (lista.get(i).get_id().equals(produto.get_id())) {
