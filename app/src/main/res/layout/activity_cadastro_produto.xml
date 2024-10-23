@@ -82,7 +82,7 @@
             android:id="@+id/check_promo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="esá na promoção" />
+            android:text="está na promoção" />
 
         <LinearLayout
             android:layout_width="match_parent"

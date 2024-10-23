@@ -18,6 +18,12 @@ public class CarrinhoUtils {
     public static final String NOME_PREFS = "carrinho_prefs";
     public static final String LISTA_NAME = "carrinho_lista";
 
+    public static void clearProdutos(Context c) {
+        SharedPreferences prefs = c.getSharedPreferences(NOME_PREFS, Context.MODE_PRIVATE);
+        @SuppressLint("CommitPrefEdits") SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(LISTA_NAME, new Gson().toJson(new ArrayList<>())).apply();
+    }
+
     public static List<ProdutoModel> returnProdutos(Context c) {
         SharedPreferences prefs = c.getSharedPreferences(NOME_PREFS, Context.MODE_PRIVATE);
         List<ProdutoModel> lista = new ArrayList<>();
@@ -41,7 +47,7 @@ public class CarrinhoUtils {
         List<ProdutoModel> listaExistente = new Gson().fromJson(prefs.getString(LISTA_NAME, ""), new TypeToken<List<ProdutoModel>>() {
         }.getType());
 
-        if ( listaExistente == null){
+        if (listaExistente == null) {
             listaExistente = new ArrayList<>();
         }
 
@@ -54,7 +60,7 @@ public class CarrinhoUtils {
             }
         }
 
-        if (cadastrarNovoProduto){
+        if (cadastrarNovoProduto) {
             lista.add(produto);
         }
 
@@ -71,7 +77,7 @@ public class CarrinhoUtils {
         List<ProdutoModel> listaExistente = new Gson().fromJson(prefs.getString(LISTA_NAME, ""), new TypeToken<List<ProdutoModel>>() {
         }.getType());
 
-        if (listaExistente != null){
+        if (listaExistente != null) {
             lista.addAll(listaExistente);
         }
 

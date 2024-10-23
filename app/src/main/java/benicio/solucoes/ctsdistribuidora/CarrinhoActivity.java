@@ -167,7 +167,7 @@ public class CarrinhoActivity extends AppCompatActivity {
     }
 
 
-    @SuppressLint("DefaultLocale")
+    @SuppressLint({"DefaultLocale", "NotifyDataSetChanged"})
     private void compartilharTexto() {
 
         String representanteString = mainBinding.editRepresentante.getText().toString();
@@ -194,8 +194,8 @@ public class CarrinhoActivity extends AppCompatActivity {
             }
 
             infos.append("\n")
-                    .append("_"+mainBinding.valorTotalText.getText().toString().split(":")[1].trim()+"_").append("\n")
-                    .append("_"+mainBinding.descontoText.getText().toString().split(":")[1].trim()+"_").append("\n")
+                    .append("_" + mainBinding.valorTotalText.getText().toString().split(":")[1].trim() + "_").append("\n")
+                    .append("_" + mainBinding.descontoText.getText().toString().split(":")[1].trim() + "_").append("\n")
                     .append("*" + mainBinding.valorDesconto.getText().toString().split(":")[1].toUpperCase().trim() + "*").append("\n");
 
 
@@ -207,6 +207,10 @@ public class CarrinhoActivity extends AppCompatActivity {
             // Iniciando o intent de compartilhamento
             if (intent.resolveActivity(getPackageManager()) != null) {
                 startActivity(chooser);
+
+                produtosCarrinho.clear();
+                adapterProduto.notifyDataSetChanged();
+                CarrinhoUtils.clearProdutos(this);
             }
         }
 
