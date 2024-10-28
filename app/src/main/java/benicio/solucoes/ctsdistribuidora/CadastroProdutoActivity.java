@@ -104,8 +104,9 @@ public class CadastroProdutoActivity extends AppCompatActivity {
             if (produtoModel.get_id().isEmpty()) {
                 produtoModel.set_id(UUID.randomUUID().toString());
             }
-
-            uploadImagem(imageUri, produtoModel.get_id());
+            try{
+                uploadImagem(imageUri, produtoModel.get_id());
+            }catch (Exception ignored){}
 
             apiService.create_produto(new ProdutoModel(
                     produtoModel.get_id(),
