@@ -1,17 +1,22 @@
 package benicio.solucoes.ctsdistribuidora;
 
+import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.WindowManager;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.content.FileProvider;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -21,6 +26,10 @@ import com.google.gson.reflect.TypeToken;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -38,6 +47,9 @@ import retrofit2.Response;
 
 public class CadastroProdutoActivity extends AppCompatActivity {
 
+    private Dialog dialogSelectImagem;
+
+    public static final int REQUEST_IMAGE_CAPTURE = 2;
     private static final int PICK_IMAGE = 1;
     private Uri imageUri;
     private ApiService apiService;
@@ -47,6 +59,7 @@ public class CadastroProdutoActivity extends AppCompatActivity {
 
     private boolean isUpdate = false;
 
+    @SuppressLint("QueryPermissionsNeeded")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,8 +79,19 @@ public class CadastroProdutoActivity extends AppCompatActivity {
         mainBinding.voltar.setOnClickListener(v -> finish());
 
         mainBinding.camera.setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            startActivityForResult(intent, PICK_IMAGE);
+            AlertDialog.Builder b = new AlertDialog.Builder(this);
+            b.setTitle("Escolha um opção");
+            b.setPositiveButton("Galeria", (d,i) -> {
+                dialogSelectImagem.dismiss();
+                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, PICK_IMAGE);
+            });
+            b.setNegativeButton("Câmera", (d,i) -> {
+                dialogSelectImagem.dismiss();
+                openCamera();
+            });
+            dialogSelectImagem = b.create();
+            dialogSelectImagem.show();
         });
 
         Bundle b = getIntent().getExtras();
@@ -106,7 +130,9 @@ public class CadastroProdutoActivity extends AppCompatActivity {
             }
             try{
                 uploadImagem(imageUri, produtoModel.get_id());
-            }catch (Exception ignored){}
+            }catch (Exception ignored){
+                Log.d("mayara", "onCreate: " + ignored.getMessage());
+            }
 
             apiService.create_produto(new ProdutoModel(
                     produtoModel.get_id(),
@@ -149,50 +175,67 @@ public class CadastroProdutoActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_IMAGE && resultCode == RESULT_OK && data != null) {
             imageUri = data.getData();
-            mainBinding.camera.setImageURI(imageUri); // Exibe a imagem selecionada na ImageView
+            mainBinding.camera.setImageURI(imageUri);
         }
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            mainBinding.camera.setImageURI(imageUri);
+        }
+
     }
 
     public void uploadImagem(Uri imageUri, String idDoProduto) {
-        // Obtenha o caminho absoluto da imagem a partir do URI
-        String imagePath = getRealPathFromURI(imageUri);
-        if (imagePath == null) return;
+        try {
+            // Obtenha um InputStream do URI
+            InputStream inputStream = getContentResolver().openInputStream(imageUri);
 
-        File file = new File(imagePath);
+            // Crie um RequestBody a partir do InputStream
+            RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"), inputStream.readAllBytes());
 
-        // Converter o arquivo para RequestBody e MultipartBody.Part
-        RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"), file);
-        MultipartBody.Part body = MultipartBody.Part.createFormData("imagem", file.getName(), requestFile);
+            // Use o nome do arquivo desejado para o upload
+            MultipartBody.Part body = MultipartBody.Part.createFormData("imagem", "image.jpg", requestFile);
 
-        apiService.uploadImagem(body, idDoProduto).enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                if (response.isSuccessful()) {
-                    // Upload foi bem-sucedido
-                    Log.d("mayara", "Upload bem-sucedido");
-                } else {
-                    // Falha na resposta
-                    Log.d("mayara", "Falha no upload: " + response.code());
+            // Chame a API para fazer o upload
+            apiService.uploadImagem(body, idDoProduto).enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    if (response.isSuccessful()) {
+                        Log.d("mayara", "Upload bem-sucedido");
+                    } else {
+                        Log.d("mayara", "Falha no upload: " + response.code());
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                Log.e("mayara", "Erro: " + t.getMessage());
-            }
-        });
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+                    Log.e("mayara", "Erro: " + t.getMessage());
+                }
+            });
 
+        } catch (IOException e) {
+            Log.e("mayara", "Erro ao abrir o InputStream: " + e.getMessage());
+        }
     }
 
-    // Função para obter o caminho real da imagem a partir do URI
-    public String getRealPathFromURI(Uri uri) {
-        String[] projection = {MediaStore.Images.Media.DATA};
-        Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
-        if (cursor != null) {
-            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            cursor.moveToFirst();
-            return cursor.getString(column_index);
+    private void openCamera() {
+        File photoFile = null;
+        try {
+            photoFile = createImageFile();
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
-        return null;
+
+        if (photoFile != null) {
+            imageUri = FileProvider.getUriForFile(this, "benicio.solucoes.ctsdistribuidora.fileprovider", photoFile);
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+            startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+        }
+    }
+
+    private File createImageFile() throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        return File.createTempFile(imageFileName, ".jpg", storageDir);
     }
 }

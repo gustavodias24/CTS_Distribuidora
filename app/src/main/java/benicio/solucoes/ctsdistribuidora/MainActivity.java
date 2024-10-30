@@ -16,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding mainBinding;
 
-    private static final String SENHA_ADM = "admin";
+    private static final String SENHA_ADM = "admin@321";
     private Dialog d;
 
     @Override

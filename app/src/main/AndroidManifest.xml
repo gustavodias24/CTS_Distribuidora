@@ -18,7 +18,19 @@
         android:theme="@style/Theme.CTSDistribuidora"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
-        <activity
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="benicio.solucoes.ctsdistribuidora.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+        <meta-data
+            android:name="android.support.FILE_PROVIDER_PATHS"
+            android:resource="@xml/file_paths" />
+        </provider>
+
+
+    <activity
             android:name=".CarrinhoActivity"
             android:exported="false" />
         <activity
