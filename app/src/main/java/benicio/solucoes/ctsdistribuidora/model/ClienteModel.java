@@ -9,7 +9,7 @@ public class ClienteModel {
     String endereco= "";
     String contato= "";
     String datainicio= "";
-    String desconto = "";
+    String desconto = "0";
 
     public ClienteModel() {
     }

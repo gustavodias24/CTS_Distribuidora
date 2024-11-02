@@ -21,6 +21,7 @@ public class MainAdminActivity extends AppCompatActivity {
 
     private ActivityMainAdminBinding mainBinding;
 
+    private Dialog dialogCliente;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,11 +37,26 @@ public class MainAdminActivity extends AppCompatActivity {
 
         mainBinding.imageView2.setOnClickListener(v -> finish());
 
-        mainBinding.cadastroCliente.setOnClickListener(v -> startActivity(new Intent(this, CadatroClienteActivity.class)));
+        mainBinding.cadastroCliente.setOnClickListener(v -> {
+            AlertDialog.Builder b = new AlertDialog.Builder(this);
+            b.setTitle("Escolha uma Opção");
+
+            b.setPositiveButton("Ir para Cadastro", (d, i) -> {
+                startActivity(new Intent(this, CadatroClienteActivity.class));
+                dialogCliente.dismiss();
+            });
+            b.setNegativeButton("Listagem de Cliente", (d, i) -> {
+                startActivity(new Intent(this, ListagemClienteActivity.class));
+                dialogCliente.dismiss();
+            });
+
+            dialogCliente = b.create();
+            dialogCliente.show();
+        });
 
         mainBinding.cadastroProduto.setOnClickListener(v -> startActivity(new Intent(this, CadastroProdutoActivity.class)));
         mainBinding.tabelaPreco.setOnClickListener(v -> {
-            Intent i = new Intent(this,  TabelaPrecoActivity.class);
+            Intent i = new Intent(this, TabelaPrecoActivity.class);
             i.putExtra("isAdmin", true);
             startActivity(i);
         });

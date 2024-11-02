@@ -7,6 +7,13 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -27,6 +34,8 @@ public class CadatroClienteActivity extends AppCompatActivity {
 
     private ApiService apiService;
 
+    private boolean update = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +52,26 @@ public class CadatroClienteActivity extends AppCompatActivity {
                 RetrofitUtil.createRetrofit()
         );
 
-        clienteModel = new ClienteModel();
+        try {
+            update = true;
+            Bundle b = getIntent().getExtras();
+            clienteModel = new Gson().fromJson(
+                    b.getString("cliente", ""),
+                    new TypeToken<ClienteModel>() {
+                    }.getType()
+
+            );
+
+            mainBinding.fieldRepresentante.setText(clienteModel.getRepresentante());
+            mainBinding.fieldCliente.setText(clienteModel.getCliente());
+            mainBinding.fieldDoc.setText(clienteModel.getDocumento());
+            mainBinding.fieldEndereco.setText(clienteModel.getEndereco());
+            mainBinding.fieldContato.setText(clienteModel.getContato());
+            mainBinding.fieldDataInicio.setText(clienteModel.getDatainicio());
+
+        } catch (Exception ignored) {
+            clienteModel = new ClienteModel();
+        }
 
         mainBinding.voltar.setOnClickListener(v -> finish());
 
@@ -60,23 +88,23 @@ public class CadatroClienteActivity extends AppCompatActivity {
             clienteModel.setContato(Objects.requireNonNull(mainBinding.fieldContato.getText()).toString());
             clienteModel.setDatainicio(Objects.requireNonNull(mainBinding.fieldDataInicio.getText()).toString());
             clienteModel.setDatainicio(Objects.requireNonNull(mainBinding.fieldDataInicio.getText()).toString());
-            clienteModel.setDesconto(Objects.requireNonNull(mainBinding.fieldDesconto.getText()).toString());
 
 
             apiService.create_cliente(clienteModel).enqueue(new Callback<Void>() {
                 @Override
                 public void onResponse(Call<Void> call, Response<Void> response) {
                     if (response.isSuccessful()) {
-                        String msg = "Cliente criado com sucesso!";
+                        String msg = "Cliente salvo com sucesso!";
 
                         Toast.makeText(CadatroClienteActivity.this, msg, Toast.LENGTH_SHORT).show();
-                        mainBinding.fieldRepresentante.setText("");
-                        mainBinding.fieldCliente.setText("");
-                        mainBinding.fieldDoc.setText("");
-                        mainBinding.fieldEndereco.setText("");
-                        mainBinding.fieldContato.setText("");
-                        mainBinding.fieldDataInicio.setText("");
-                        mainBinding.fieldDesconto.setText("");
+                        if (!update) {
+                            mainBinding.fieldRepresentante.setText("");
+                            mainBinding.fieldCliente.setText("");
+                            mainBinding.fieldDoc.setText("");
+                            mainBinding.fieldEndereco.setText("");
+                            mainBinding.fieldContato.setText("");
+                            mainBinding.fieldDataInicio.setText("");
+                        }
                     }
                 }
 

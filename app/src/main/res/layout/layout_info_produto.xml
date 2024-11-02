@@ -12,17 +12,45 @@
         android:padding="8dp">
 
         <ProgressBar
+            android:visibility="gone"
             android:id="@+id/carregar_imagem_produto"
             style="?android:attr/progressBarStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <ImageView
-            android:id="@+id/camera"
+        <com.otaliastudios.zoom.ZoomLayout
             android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:visibility="gone"
-            app:srcCompat="@drawable/camera" />
+            android:layout_height="300dp"
+            android:scrollbars="vertical|horizontal"
+            app:transformation="centerInside"
+            app:transformationGravity="auto"
+            app:alignment="center"
+            app:overScrollHorizontal="true"
+            app:overScrollVertical="true"
+            app:overPinchable="true"
+            app:horizontalPanEnabled="true"
+            app:verticalPanEnabled="true"
+            app:zoomEnabled="true"
+            app:flingEnabled="true"
+            app:scrollEnabled="true"
+            app:oneFingerScrollEnabled="true"
+            app:twoFingersScrollEnabled="true"
+            app:threeFingersScrollEnabled="true"
+            app:minZoom="1"
+            app:minZoomType="zoom"
+            app:maxZoom="10"
+            app:maxZoomType="zoom"
+            app:animationDuration="280"
+            app:hasClickableChildren="false">
+            <ImageView
+                android:id="@+id/camera"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:visibility="visible"
+                app:srcCompat="@drawable/camera" />
+        </com.otaliastudios.zoom.ZoomLayout>
+
+
 
         <TextView
             android:id="@+id/titulo"

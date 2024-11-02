@@ -106,14 +106,7 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/field_desconto"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Desconto %" />
-        </com.google.android.material.textfield.TextInputLayout>
+            android:layout_height="wrap_content"/>
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"

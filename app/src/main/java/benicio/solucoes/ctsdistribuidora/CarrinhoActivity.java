@@ -57,6 +57,11 @@ public class CarrinhoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mainBinding = ActivityCarrinhoBinding.inflate(getLayoutInflater());
         setContentView(mainBinding.getRoot());
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        getWindow().setFlags(
+                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN
+        );
 
         carrinho_prefs = getSharedPreferences("carrinho_prefs", MODE_PRIVATE);
         editor = carrinho_prefs.edit();
@@ -67,12 +72,6 @@ public class CarrinhoActivity extends AppCompatActivity {
         mainBinding.descontoText.setText("Desconto Aplicado: " + descontoSelecionado + " %");
         mainBinding.autoCompleteClientes.setText(carrinho_prefs.getString("clienteSelecionado", ""));
         mainBinding.editRepresentante.setText(carrinho_prefs.getString("Representante", ""));
-
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        getWindow().setFlags(
-                WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN
-        );
 
         apiService = RetrofitUtil.createService(
                 RetrofitUtil.createRetrofit()
