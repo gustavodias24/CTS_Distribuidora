@@ -172,46 +172,46 @@ public class CarrinhoActivity extends AppCompatActivity {
         String representanteString = mainBinding.editRepresentante.getText().toString();
         editor.putString("Representante", representanteString).apply();
 
-        if (clienteSelecionado.isEmpty()) {
-            Toast.makeText(this, "Selecione um cliente primeiro!", Toast.LENGTH_SHORT).show();
-        } else {
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.setType("text/plain");
+//        if (clienteSelecionado.isEmpty()) {
+//            Toast.makeText(this, "Selecione um cliente primeiro!", Toast.LENGTH_SHORT).show();
+//        } else {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
 
-            StringBuilder infos = new StringBuilder();
-            infos.append(representanteString).append("\n\n");
-            infos.append(clienteSelecionado).append("\n\n");
+        StringBuilder infos = new StringBuilder();
+        infos.append(representanteString).append("\n\n");
+//        infos.append(clienteSelecionado).append("\n\n");
 
-            for (ProdutoModel produtoModel : produtosCarrinho) {
-                Float valorUnitario = Float.parseFloat(produtoModel.getValor().replace(",", "."));
-                Float valorSomado = Float.parseFloat(produtoModel.getValorSomado().replace(",", "."));
-                int quantidadeComprada = (int) (valorSomado / valorUnitario);
+        for (ProdutoModel produtoModel : produtosCarrinho) {
+            Float valorUnitario = Float.parseFloat(produtoModel.getValor().replace(",", "."));
+            Float valorSomado = Float.parseFloat(produtoModel.getValorSomado().replace(",", "."));
+            int quantidadeComprada = (int) (valorSomado / valorUnitario);
 
-                infos.append(String.format("%03d", quantidadeComprada))
-                        .append(" ").append(produtoModel.getNome())
-                        .append(" ").append(produtoModel.getValorSomado()).append('\n');
-            }
-
-            infos.append("\n")
-                    .append("_" + mainBinding.valorTotalText.getText().toString().split(":")[1].trim() + "_").append("\n")
-                    .append("_" + mainBinding.descontoText.getText().toString().split(":")[1].trim() + "_").append("\n")
-                    .append("*" + mainBinding.valorDesconto.getText().toString().split(":")[1].toUpperCase().trim() + "*").append("\n");
-
-
-            intent.putExtra(Intent.EXTRA_TEXT, infos.toString());
-
-            // Criando o chooser (menu de seleção de apps)
-            Intent chooser = Intent.createChooser(intent, "Compartilhar usando");
-
-            // Iniciando o intent de compartilhamento
-            if (intent.resolveActivity(getPackageManager()) != null) {
-                startActivity(chooser);
-
-                produtosCarrinho.clear();
-                adapterProduto.notifyDataSetChanged();
-                CarrinhoUtils.clearProdutos(this);
-            }
+            infos.append(String.format("%03d", quantidadeComprada))
+                    .append(" ").append(produtoModel.getNome())
+                    .append(" ").append(produtoModel.getValorSomado()).append('\n');
         }
+
+        infos.append("\n")
+                .append("_" + mainBinding.valorTotalText.getText().toString().split(":")[1].trim() + "_").append("\n")
+                .append("_" + mainBinding.descontoText.getText().toString().split(":")[1].trim() + "_").append("\n")
+                .append("*" + mainBinding.valorDesconto.getText().toString().split(":")[1].toUpperCase().trim() + "*").append("\n");
+
+
+        intent.putExtra(Intent.EXTRA_TEXT, infos.toString());
+
+        // Criando o chooser (menu de seleção de apps)
+        Intent chooser = Intent.createChooser(intent, "Compartilhar usando");
+
+        // Iniciando o intent de compartilhamento
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(chooser);
+
+            produtosCarrinho.clear();
+            adapterProduto.notifyDataSetChanged();
+            CarrinhoUtils.clearProdutos(this);
+        }
+//        }
 
     }
 }

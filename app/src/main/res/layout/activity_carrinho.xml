@@ -62,7 +62,8 @@
             android:completionThreshold="1"
             android:hint="Selecione o cliente"
             android:inputType="text"
-            android:padding="8dp" />
+            android:padding="8dp"
+            android:visibility="gone" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_produtos"
