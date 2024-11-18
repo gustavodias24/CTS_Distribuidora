@@ -3,6 +3,7 @@ package benicio.solucoes.ctsdistribuidora;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.view.WindowManager;
 
 import androidx.activity.EdgeToEdge;
@@ -38,7 +39,6 @@ public class TabelaPrecoActivity extends AppCompatActivity {
 
     private ApiService apiService;
 
-
     private boolean isAdmin = false;
 
     @Override
@@ -61,10 +61,7 @@ public class TabelaPrecoActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<ResponseModelProduto> call, Response<ResponseModelProduto> response) {
                     if (response.isSuccessful()) {
-                        lista.clear();
-                        lista.addAll(response.body().getMsg());
-                        Collections.sort(lista, (p1, p2) -> p1.getNome().compareToIgnoreCase(p2.getNome()));
-                        adapterProduto.notifyDataSetChanged();
+                        preencherLista(response.body().getMsg());
                     }
                 }
 
@@ -98,15 +95,28 @@ public class TabelaPrecoActivity extends AppCompatActivity {
     }
 
     private void atualizarProdutos() {
-        apiService.get_produto().enqueue(new Callback<ResponseModelProduto>() {
-            @SuppressLint("NotifyDataSetChanged")
+        String categoria = getIntent().getExtras().getString("categoria", "Outros");
+
+//        if (categoria.equals("Outros")) {
+//            apiService.get_produto().enqueue(new Callback<ResponseModelProduto>() {
+//                @Override
+//                public void onResponse(Call<ResponseModelProduto> call, Response<ResponseModelProduto> response) {
+//                    if (response.isSuccessful()) {
+//                        preencherLista(response.body().getMsg());
+//                    }
+//                }
+//
+//                @Override
+//                public void onFailure(Call<ResponseModelProduto> call, Throwable throwable) {
+//
+//                }
+//            });
+//        } else {
+        apiService.get_filter_produto("categoria", categoria).enqueue(new Callback<ResponseModelProduto>() {
             @Override
             public void onResponse(Call<ResponseModelProduto> call, Response<ResponseModelProduto> response) {
                 if (response.isSuccessful()) {
-                    lista.clear();
-                    lista.addAll(response.body().getMsg());
-                    Collections.sort(lista, (p1, p2) -> p1.getNome().compareToIgnoreCase(p2.getNome()));
-                    adapterProduto.notifyDataSetChanged();
+                    preencherLista(response.body().getMsg());
                 }
             }
 
@@ -115,6 +125,21 @@ public class TabelaPrecoActivity extends AppCompatActivity {
 
             }
         });
+//        }
+
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private void preencherLista(List<ProdutoModel> produtos) {
+        lista.clear();
+        lista.addAll(produtos);
+        if (lista.isEmpty()) {
+            mainBinding.avisoListaVazia.setVisibility(View.VISIBLE);
+        } else {
+            mainBinding.avisoListaVazia.setVisibility(View.GONE);
+        }
+        Collections.sort(lista, (p1, p2) -> p1.getNome().compareToIgnoreCase(p2.getNome()));
+        adapterProduto.notifyDataSetChanged();
     }
 
     @SuppressLint("NotifyDataSetChanged")

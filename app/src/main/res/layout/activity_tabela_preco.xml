@@ -69,6 +69,15 @@
             android:layout_marginTop="4dp"
             app:srcCompat="@drawable/label_descri_valor" />
 
+        <TextView
+            android:id="@+id/aviso_lista_vazia"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="NENHUM PRODUTO"
+            android:visibility="gone" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_produtos"
             android:layout_width="match_parent"

@@ -9,7 +9,11 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -47,6 +51,7 @@ import retrofit2.Response;
 
 public class CadastroProdutoActivity extends AppCompatActivity {
 
+    private String categoriaSelecionada = "";
     private Dialog dialogSelectImagem;
 
     public static final int REQUEST_IMAGE_CAPTURE = 2;
@@ -65,12 +70,13 @@ public class CadastroProdutoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mainBinding = ActivityCadastroProdutoBinding.inflate(getLayoutInflater());
         setContentView(mainBinding.getRoot());
-
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         getWindow().setFlags(
                 WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN
         );
+
+        configurarSpinnerCategoria();
 
         apiService = RetrofitUtil.createService(
                 RetrofitUtil.createRetrofit()
@@ -81,12 +87,12 @@ public class CadastroProdutoActivity extends AppCompatActivity {
         mainBinding.camera.setOnClickListener(v -> {
             AlertDialog.Builder b = new AlertDialog.Builder(this);
             b.setTitle("Escolha um opção");
-            b.setPositiveButton("Galeria", (d,i) -> {
+            b.setPositiveButton("Galeria", (d, i) -> {
                 dialogSelectImagem.dismiss();
                 Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(intent, PICK_IMAGE);
             });
-            b.setNegativeButton("Câmera", (d,i) -> {
+            b.setNegativeButton("Câmera", (d, i) -> {
                 dialogSelectImagem.dismiss();
                 openCamera();
             });
@@ -115,6 +121,30 @@ public class CadastroProdutoActivity extends AppCompatActivity {
                 }
             });
 
+            switch (produtoModel.getCategoria()) {
+                case "Chocolates":
+                    mainBinding.spinnerCategorias.setSelection(0);
+                    break;
+                case "Doces":
+                    mainBinding.spinnerCategorias.setSelection(1);
+                    break;
+                case "Bebidas":
+                    mainBinding.spinnerCategorias.setSelection(2);
+                    break;
+                case "Salgadinhos":
+                    mainBinding.spinnerCategorias.setSelection(3);
+                    break;
+                case "Embalagens":
+                    mainBinding.spinnerCategorias.setSelection(4);
+                    break;
+                case "Balas":
+                    mainBinding.spinnerCategorias.setSelection(5);
+                    break;
+                case "Outros":
+                    mainBinding.spinnerCategorias.setSelection(6);
+                    break;
+            }
+
             mainBinding.fieldNome.setText(produtoModel.getNome());
             mainBinding.fieldDescricao.setText(produtoModel.getDescricao());
             mainBinding.fieldValor.setText(produtoModel.getValor());
@@ -128,9 +158,9 @@ public class CadastroProdutoActivity extends AppCompatActivity {
             if (produtoModel.get_id().isEmpty()) {
                 produtoModel.set_id(UUID.randomUUID().toString());
             }
-            try{
+            try {
                 uploadImagem(imageUri, produtoModel.get_id());
-            }catch (Exception ignored){
+            } catch (Exception ignored) {
                 Log.d("mayara", "onCreate: " + ignored.getMessage());
             }
 
@@ -139,7 +169,8 @@ public class CadastroProdutoActivity extends AppCompatActivity {
                     Objects.requireNonNull(mainBinding.fieldNome.getText()).toString(),
                     Objects.requireNonNull(mainBinding.fieldDescricao.getText()).toString(),
                     Objects.requireNonNull(Objects.requireNonNull(mainBinding.fieldValor.getText()).toString().replace(",", ".")),
-                    mainBinding.checkPromo.isChecked()
+                    mainBinding.checkPromo.isChecked(),
+                    categoriaSelecionada
             )).enqueue(new Callback<Void>() {
                 @Override
                 public void onResponse(Call<Void> call, Response<Void> response) {
@@ -168,6 +199,32 @@ public class CadastroProdutoActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    private void configurarSpinnerCategoria() {
+        // Referência ao Spinner
+        Spinner spinnerCategorias = findViewById(R.id.spinnerCategorias);
+
+        // Lista de opções
+        String[] categorias = {"Chocolates", "Doces", "Bebidas", "Salgadinhos", "Embalagens", "Balas", "Outros"};
+
+        // Adaptador para o Spinner
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categorias);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerCategorias.setAdapter(adapter);
+        spinnerCategorias.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // Salva a seleção na variável
+                categoriaSelecionada = categorias[position];
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Pode deixar vazio ou definir um valor padrão
+//                categoriaSelecionada = "Nenhuma";
+            }
+        });
     }
 
     @Override

@@ -32,7 +32,12 @@ public class MainActivity extends AppCompatActivity {
         );
 
 
-        mainBinding.tabelaPreco.setOnClickListener(v -> startActivity(new Intent(this, TabelaPrecoActivity.class)));
+        mainBinding.tabelaPreco.setOnClickListener(v -> {
+            Intent i = new Intent(this, MenuCategoriasActivity.class);
+            i.putExtra("isAdmin", false);
+            startActivity(i);
+        });
+
         mainBinding.ofertaSemana.setOnClickListener(v -> startActivity(new Intent(this, OfertasSemanaActivity.class)));
 
         mainBinding.buttonAdminCadastro.setOnClickListener(v -> {

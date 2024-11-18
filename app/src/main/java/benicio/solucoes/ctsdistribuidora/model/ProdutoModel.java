@@ -3,18 +3,20 @@ package benicio.solucoes.ctsdistribuidora.model;
 public class ProdutoModel {
     String _id = "";
     String nome = "";
+    String categoria = "Outros";
     String descricao = "";
     String valor = "";
     String valorSomado = valor;
 
     boolean promo;
 
-    public ProdutoModel(String _id, String nome, String descricao, String valor, boolean promo) {
+    public ProdutoModel(String _id, String nome, String descricao, String valor, boolean promo, String categoria) {
         this._id = _id;
         this.nome = nome;
         this.descricao = descricao;
         this.valor = valor;
         this.promo = promo;
+        this.categoria = categoria;
     }
 
     boolean checado = false;
@@ -28,6 +30,14 @@ public class ProdutoModel {
             return valorSomado;
 
         return valor;
+    }
+
+    public String getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
     }
 
     public void setValorSomado(String valorSomado) {
