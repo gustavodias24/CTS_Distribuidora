@@ -193,9 +193,9 @@ public class CarrinhoActivity extends AppCompatActivity {
         }
 
         infos.append("\n")
-                .append("_" + mainBinding.valorTotalText.getText().toString().split(":")[1].trim() + "_").append("\n")
-                .append("_" + mainBinding.descontoText.getText().toString().split(":")[1].trim() + "_").append("\n")
-                .append("*" + mainBinding.valorDesconto.getText().toString().split(":")[1].toUpperCase().trim() + "*").append("\n");
+                .append("*" + mainBinding.valorTotalText.getText().toString().split(":")[1].trim() + "*").append("\n");
+//                .append("_" + mainBinding.descontoText.getText().toString().split(":")[1].trim() + "_").append("\n")
+//                .append("*" + mainBinding.valorDesconto.getText().toString().split(":")[1].toUpperCase().trim() + "*").append("\n");
 
 
         intent.putExtra(Intent.EXTRA_TEXT, infos.toString());
